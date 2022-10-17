@@ -32,8 +32,24 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        newRound()
     }
+    
+    var currentGame: Game!
+    
+    func newRound(){
+        let newWord = listOfWords.removeFirst()
+        currentGame = Game(word: newWord, incorrectMovesRemaining:
+        incorrectMovesAllowed)
+        updateUI()
 
+     }
+    
+    func updateUI(){
+        scoreLabel.text = "Wins: \(totalWins), Losses: \(totalLosses)"
+        treeImageView.image = UIImage(named: "Tree  \(currentGame.incorrectMovesRemaining)")
+
+    }
 
     @IBAction func buttonPressed(_ sender: UIButton) {
         sender.isEnabled = false
@@ -42,5 +58,6 @@ class ViewController: UIViewController {
         }
         
     }
+    
 }
 

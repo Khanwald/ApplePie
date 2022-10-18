@@ -19,7 +19,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var scoreLabel: UILabel!
     
     // variables
-    var letter:String = " "
     
     var listOfWords = ["buccaneer", "swift", "glorious", "incandescent", "bug", "program"]
     
@@ -38,24 +37,52 @@ class ViewController: UIViewController {
     var currentGame: Game!
     
     func newRound(){
+        if listOfWords.count == 0{
+            return
+        }
         let newWord = listOfWords.removeFirst()
         currentGame = Game(word: newWord, incorrectMovesRemaining:
-        incorrectMovesAllowed)
+                            incorrectMovesAllowed, guessedLetters: [])
         updateUI()
 
      }
     
     func updateUI(){
         scoreLabel.text = "Wins: \(totalWins), Losses: \(totalLosses)"
-        treeImageView.image = UIImage(named: "Tree  \(currentGame.incorrectMovesRemaining)")
+        treeImageView.image = UIImage(named: "Tree \(currentGame.incorrectMovesRemaining)")
+        won()
 
     }
-
+    func won(){
+        if currentGame.formatedWord == currentGame.word{
+            totalWins += 1
+            newRound()
+            reset()
+        }
+        else if currentGame.incorrectMovesRemaining == 0{
+            totalLosses += 1
+            newRound()
+            reset()
+        }
+        
+    }
+    
+    func reset(){
+        for a in letterButtons{
+            a.isEnabled = true
+        }
+    }
     @IBAction func buttonPressed(_ sender: UIButton) {
         sender.isEnabled = false
-        if let text = sender.titleLabel?.text {
-            letter = text
+        var letterString = " "
+        if let a = sender.titleLabel?.text{
+            letterString = a
         }
+        let letter = Character(letterString.lowercased())
+        currentGame.playerGuess(letter: letter)
+        correctWordLabel.text = currentGame.formatedWord
+        
+        updateUI()
         
     }
     

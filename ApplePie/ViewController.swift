@@ -37,39 +37,41 @@ class ViewController: UIViewController {
     var currentGame: Game!
     
     func newRound(){
-        if listOfWords.count == 0{
-            return
+        if !listOfWords.isEmpty{
+            let newWord = listOfWords.removeFirst()
+            currentGame = Game(word: newWord, incorrectMovesRemaining:
+                                incorrectMovesAllowed, guessedLetters: [])
+            
+            updateUI()
+            reset(true)
         }
-        let newWord = listOfWords.removeFirst()
-        currentGame = Game(word: newWord, incorrectMovesRemaining:
-                            incorrectMovesAllowed, guessedLetters: [])
-        updateUI()
-
+        else{
+            reset(false)
+        }
      }
     
     func updateUI(){
+        correctWordLabel.text = currentGame.formatedWord
         scoreLabel.text = "Wins: \(totalWins), Losses: \(totalLosses)"
         treeImageView.image = UIImage(named: "Tree \(currentGame.incorrectMovesRemaining)")
         won()
+        
 
     }
     func won(){
         if currentGame.formatedWord == currentGame.word{
             totalWins += 1
             newRound()
-            reset()
-        }
+                    }
         else if currentGame.incorrectMovesRemaining == 0{
             totalLosses += 1
             newRound()
-            reset()
         }
-        
     }
     
-    func reset(){
+    func reset(_ b:Bool){
         for a in letterButtons{
-            a.isEnabled = true
+            a.isEnabled = b
         }
     }
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -80,7 +82,7 @@ class ViewController: UIViewController {
         }
         let letter = Character(letterString.lowercased())
         currentGame.playerGuess(letter: letter)
-        correctWordLabel.text = currentGame.formatedWord
+    
         
         updateUI()
         
